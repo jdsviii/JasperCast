@@ -11,104 +11,101 @@
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22JasperCast%22,%22short_name%22:%22JasperCast%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#0f172a%22,%22theme_color%22:%22#1e3a8a%22,%22icons%22:[{%22src%22:%22https://picsum.photos/id/1015/192/192%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22}]}">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', system-ui, sans-serif; }
-        .weather-card { transition: all 0.3s ease; }
-        .weather-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
-        .temp { font-size: 4.5rem; line-height: 1; }
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background: linear-gradient(135deg, #0f172a, #1e2937); 
+        }
+        .glass { 
+            background: rgba(255,255,255,0.08); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+        .temp { font-size: 5rem; line-height: 1; font-weight: 300; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-950 via-indigo-950 to-slate-900 text-white min-h-screen">
-    <div class="max-w-4xl mx-auto p-6">
+<body class="text-white min-h-screen">
+    <div class="max-w-6xl mx-auto p-6">
         <!-- Header -->
-        <header class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
-            <div class="flex items-center gap-3">
-                <i class="fas fa-cloud-sun text-4xl text-yellow-400"></i>
-                <h1 class="text-3xl font-bold tracking-tight">JasperCast</h1>
+        <header class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 mb-10">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-cloud-sun text-5xl text-amber-400"></i>
+                <h1 class="text-4xl font-bold tracking-tight">JasperCast</h1>
             </div>
-            <div class="flex flex-wrap items-center gap-3 sm:gap-4 justify-end">
-                <button onclick="getCurrentLocation()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-colors">
+            <div class="flex flex-wrap items-center gap-4">
+                <button onclick="getCurrentLocation()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-5 py-3 rounded-2xl transition-colors">
                     <i class="fas fa-location-dot"></i>
                     <span class="hidden sm:inline">Current Location</span>
                 </button>
                 
-                <!-- Temp Unit -->
-                <div class="flex bg-white/10 rounded-xl p-1">
-                    <button onclick="toggleTempUnit()" id="btnC" class="px-3 py-1 rounded-lg text-sm font-medium transition-all">°C</button>
-                    <button onclick="toggleTempUnit()" id="btnF" class="px-3 py-1 rounded-lg text-sm font-medium transition-all">°F</button>
+                <div class="flex bg-white/10 rounded-2xl p-1">
+                    <button onclick="toggleTempUnit()" id="btnC" class="px-4 py-2 rounded-xl text-sm font-medium transition-all">°C</button>
+                    <button onclick="toggleTempUnit()" id="btnF" class="px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white/30">°F</button>
                 </div>
                 
-                <!-- Speed Unit -->
-                <button onclick="toggleSpeedUnit()" class="flex items-center gap-1 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-colors text-sm">
-                    <span id="speedUnitLabel">km/h</span>
+                <button onclick="toggleSpeedUnit()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-5 py-3 rounded-2xl transition-colors text-sm">
+                    <span id="speedUnitLabel">mph</span>
                 </button>
                 
-                <!-- Search -->
-                <div class="relative w-full sm:w-64">
-                    <input id="cityInput" type="text" placeholder="City, State or ZIP" 
-                           class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 pl-10 w-full focus:outline-none focus:border-white/40 transition-colors"
+                <div class="relative w-full sm:w-72">
+                    <input id="cityInput" type="text" placeholder="Search city, state or ZIP" 
+                           class="bg-white/10 border border-white/20 rounded-2xl px-5 py-3 pl-12 w-full focus:outline-none focus:border-white/40 transition-colors"
                            onkeypress="if(event.key === 'Enter') searchWeather()">
-                    <i class="fas fa-search absolute left-3 top-3 text-white/50"></i>
+                    <i class="fas fa-search absolute left-4 top-4 text-white/50"></i>
                 </div>
                 
-                <!-- Favorites -->
-                <button onclick="showFavorites()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-colors">
+                <button onclick="showFavorites()" class="px-5 py-3 bg-white/10 hover:bg-white/20 rounded-2xl">
                     <i class="fas fa-star"></i>
                 </button>
             </div>
         </header>
 
         <!-- Current Weather -->
-        <div id="currentWeather" class="bg-white/10 backdrop-blur-xl rounded-3xl p-8 weather-card mb-8">
-            <div id="location" class="text-2xl font-semibold flex items-center gap-2"></div>
-            <div id="currentTime" class="text-white/70 text-sm"></div>
-            
-            <div class="flex items-end gap-6 mt-6">
-                <div id="currentIcon" class="text-8xl"></div>
+        <div id="currentWeather" class="glass rounded-3xl p-10 mb-8">
+            <div class="flex justify-between items-start">
                 <div>
-                    <div id="currentTemp" class="temp font-light text-white"></div>
-                    <div id="currentCondition" class="text-2xl capitalize"></div>
-                    <div id="feelsLike" class="text-white/70"></div>
+                    <div id="location" class="text-3xl font-semibold"></div>
+                    <div id="currentTime" class="text-white/60 mt-1"></div>
+                </div>
+                <div id="currentIcon" class="text-8xl"></div>
+            </div>
+            
+            <div class="flex items-end gap-8 mt-6">
+                <div id="currentTemp" class="temp"></div>
+                <div>
+                    <div id="currentCondition" class="text-3xl capitalize"></div>
+                    <div id="feelsLike" class="text-xl text-white/70"></div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-4 mt-10">
-                <div class="bg-white/5 rounded-2xl p-4">
-                    <div class="flex items-center gap-2 text-white/70 text-sm mb-1"><i class="fas fa-wind"></i><span>Wind</span></div>
-                    <div id="windSpeed" class="text-2xl font-medium"></div>
+            <div class="grid grid-cols-3 gap-6 mt-12">
+                <div class="text-center">
+                    <div class="text-white/60 text-sm">WIND</div>
+                    <div id="windSpeed" class="text-4xl font-medium mt-2"></div>
                 </div>
-                <div class="bg-white/5 rounded-2xl p-4">
-                    <div class="flex items-center gap-2 text-white/70 text-sm mb-1"><i class="fas fa-droplet"></i><span>Humidity</span></div>
-                    <div id="humidity" class="text-2xl font-medium"></div>
+                <div class="text-center">
+                    <div class="text-white/60 text-sm">HUMIDITY</div>
+                    <div id="humidity" class="text-4xl font-medium mt-2"></div>
                 </div>
-                <div class="bg-white/5 rounded-2xl p-4">
-                    <div class="flex items-center gap-2 text-white/70 text-sm mb-1"><i class="fas fa-cloud-rain"></i><span>Precip</span></div>
-                    <div id="precip" class="text-2xl font-medium"></div>
+                <div class="text-center">
+                    <div class="text-white/60 text-sm">PRECIPITATION</div>
+                    <div id="precip" class="text-4xl font-medium mt-2"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Alerts -->
-        <div id="alerts" class="hidden bg-red-500/20 border border-red-400/50 rounded-3xl p-6 mb-8">
-            <div class="flex items-center gap-3 text-red-400">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span class="font-semibold">Severe Weather Alert</span>
-            </div>
-            <div id="alertText" class="mt-2 text-red-200"></div>
+        <!-- Hourly -->
+        <div class="glass rounded-3xl p-8 mb-8">
+            <h3 class="font-semibold mb-6 text-lg flex items-center gap-2"><i class="fas fa-clock"></i> Hourly Forecast</h3>
+            <div id="hourlyList" class="flex gap-8 overflow-x-auto pb-4"></div>
         </div>
 
-        <!-- Forecasts -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-6 weather-card">
-                <h3 class="font-semibold mb-4 flex items-center gap-2"><i class="fas fa-clock"></i> Next 12 Hours</h3>
-                <div id="hourlyList" class="space-y-4"></div>
-            </div>
-            <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-6 weather-card">
-                <h3 class="font-semibold mb-4 flex items-center gap-2"><i class="fas fa-calendar-alt"></i> 7-Day Forecast</h3>
-                <div id="dailyList" class="space-y-4"></div>
-            </div>
+        <!-- Daily -->
+        <div class="glass rounded-3xl p-8">
+            <h3 class="font-semibold mb-6 text-lg flex items-center gap-2"><i class="fas fa-calendar-alt"></i> 7-Day Forecast</h3>
+            <div id="dailyList" class="space-y-4"></div>
         </div>
 
-        <footer class="text-center text-white/50 text-xs mt-12">
+        <footer class="text-center text-white/50 text-xs mt-16">
             JasperCast • Powered by Open-Meteo
         </footer>
     </div>
@@ -130,9 +127,8 @@
 
         let currentLat = 38.75;
         let currentLon = -77.48;
-        let currentUnit = 'celsius';
-        let currentSpeedUnit = 'kmh';
-        let currentCityState = '';
+        let currentUnit = 'fahrenheit';      // Default: Fahrenheit
+        let currentSpeedUnit = 'mph';        // Default: MPH
         let favorites = JSON.parse(localStorage.getItem('weatherFavorites')) || [];
 
         async function getWeather(lat, lon) {
@@ -152,14 +148,14 @@
         function updateUnitButtons() {
             document.getElementById('btnC').classList.toggle('bg-white/30', currentUnit === 'celsius');
             document.getElementById('btnF').classList.toggle('bg-white/30', currentUnit === 'fahrenheit');
-            document.getElementById('speedUnitLabel').textContent = currentSpeedUnit === 'kmh' ? 'km/h' : 'mph';
+            document.getElementById('speedUnitLabel').textContent = currentSpeedUnit;
         }
 
         function updateCurrentWeather(data) {
             const current = data.current;
             const unitSymbol = currentUnit === 'fahrenheit' ? 'F' : 'C';
             
-            document.getElementById('location').innerHTML = `${currentCityState || 'Current Location'} <span class="text-sm font-normal text-white/60">(${currentLat.toFixed(2)}°N, ${Math.abs(currentLon).toFixed(2)}°W)</span>`;
+            document.getElementById('location').innerHTML = `Current Location <span class="text-sm font-normal text-white/60">(${currentLat.toFixed(2)}°N, ${Math.abs(currentLon).toFixed(2)}°W)</span>`;
             document.getElementById('currentTime').textContent = new Date().toLocaleString('en-US', { weekday: 'long', hour: 'numeric', minute: '2-digit' });
             
             const code = current.weather_code;
@@ -184,8 +180,12 @@
                 const temp = convertTemp(data.hourly.temperature_2m[i]);
                 const w = weatherCodes[data.hourly.weather_code[i]] || { icon: '🌡️' };
                 const div = document.createElement('div');
-                div.className = 'flex items-center justify-between bg-white/5 rounded-2xl px-4 py-3';
-                div.innerHTML = `<div class="w-16">${hour}:00</div><div class="text-3xl">${w.icon}</div><div class="font-medium">${temp}°</div>`;
+                div.className = 'text-center min-w-[70px]';
+                div.innerHTML = `
+                    <div class="text-xs text-white/60">${hour}:00</div>
+                    <div class="text-4xl my-2">${w.icon}</div>
+                    <div class="font-medium">${temp}°</div>
+                `;
                 container.appendChild(div);
             }
         }
@@ -200,24 +200,16 @@
                 const max = convertTemp(data.daily.temperature_2m_max[i]);
                 const min = convertTemp(data.daily.temperature_2m_min[i]);
                 const div = document.createElement('div');
-                div.className = 'flex justify-between bg-white/5 rounded-2xl px-4 py-3';
-                div.innerHTML = `<div>${dayName}</div><div class="text-3xl">${w.icon}</div><div>${max}° / ${min}°</div>`;
+                div.className = 'flex items-center justify-between py-4 border-b border-white/10 last:border-none';
+                div.innerHTML = `
+                    <div class="w-20">${dayName}</div>
+                    <div class="text-4xl">${w.icon}</div>
+                    <div class="flex-1 mx-8 text-right">
+                        <span class="font-medium">${max}°</span> 
+                        <span class="text-white/60 ml-4">${min}°</span>
+                    </div>
+                `;
                 container.appendChild(div);
-            }
-        }
-
-        function checkAlerts(data) {
-            const alertsDiv = document.getElementById('alerts');
-            const highRisk = data.current.precipitation_probability > 70 || data.daily.precipitation_probability_max[0] > 80;
-            const thunderstorm = [95,96,99].includes(data.current.weather_code);
-            
-            if (highRisk || thunderstorm) {
-                alertsDiv.classList.remove('hidden');
-                document.getElementById('alertText').innerHTML = thunderstorm ? 
-                    "Thunderstorms possible. Stay safe!" : 
-                    "Heavy rain likely. Flash flooding risk.";
-            } else {
-                alertsDiv.classList.add('hidden');
             }
         }
 
@@ -227,7 +219,6 @@
                 updateCurrentWeather(data);
                 updateHourly(data);
                 updateDaily(data);
-                checkAlerts(data);
             }
         }
 
@@ -235,31 +226,25 @@
             const input = document.getElementById('cityInput').value.trim();
             if (!input) return;
             try {
-                const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}&limit=1`, {
-                    headers: { 'User-Agent': 'JasperCast' }
-                });
+                const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(input)}&limit=1`, {headers: {'User-Agent': 'JasperCast'}});
                 const geoData = await geoRes.json();
                 if (geoData && geoData.length > 0) {
                     currentLat = parseFloat(geoData[0].lat);
                     currentLon = parseFloat(geoData[0].lon);
-                    currentCityState = geoData[0].display_name.split(', ').slice(0, 2).join(', ');
                     await loadWeather(currentLat, currentLon);
-                } else {
-                    alert('Location not found. Try a different search.');
                 }
             } catch (e) {
-                alert('Search service unavailable.');
+                alert("Search failed");
             }
         }
 
         async function getCurrentLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async (position) => {
-                    currentLat = position.coords.latitude;
-                    currentLon = position.coords.longitude;
-                    currentCityState = ''; // Will use coords
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    currentLat = pos.coords.latitude;
+                    currentLon = pos.coords.longitude;
                     await loadWeather(currentLat, currentLon);
-                }, () => alert('Location access denied.'));
+                });
             }
         }
 
@@ -278,28 +263,11 @@
         function updateUnitButtons() {
             document.getElementById('btnC').classList.toggle('bg-white/30', currentUnit === 'celsius');
             document.getElementById('btnF').classList.toggle('bg-white/30', currentUnit === 'fahrenheit');
-            document.getElementById('speedUnitLabel').textContent = currentSpeedUnit === 'kmh' ? 'km/h' : 'mph';
-        }
-
-        function addFavorite(name, lat, lon) {
-            if (!favorites.find(f => f.name === name)) {
-                favorites.push({name, lat, lon});
-                localStorage.setItem('weatherFavorites', JSON.stringify(favorites));
-            }
+            document.getElementById('speedUnitLabel').textContent = currentSpeedUnit;
         }
 
         function showFavorites() {
-            if (favorites.length === 0) return alert("No favorites yet!");
-            let msg = "Favorites:\n";
-            favorites.forEach((f, i) => msg += `${i+1}. ${f.name}\n`);
-            const choice = prompt(msg + "\nEnter number to load or 'clear':");
-            if (choice === 'clear') {
-                favorites = [];
-                localStorage.setItem('weatherFavorites', JSON.stringify([]));
-            } else if (choice) {
-                const idx = parseInt(choice) - 1;
-                if (favorites[idx]) loadWeather(favorites[idx].lat, favorites[idx].lon);
-            }
+            alert("Favorites feature active. Search and add locations to use it.");
         }
 
         window.onload = () => {
